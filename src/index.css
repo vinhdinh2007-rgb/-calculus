@@ -1,0 +1,216 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+
+/* Enable class-based dark mode for Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ============================================
+   BK STUDY - PREMIUM DESIGN SYSTEM (Academic Luxury)
+   Light Mode: White, Blue, Dark Blue (Professional, Academic)
+   Dark Mode: Facebook-like "Kinh" (Dark Gray, High Contrast, Clean)
+   ============================================ */
+
+@theme {
+  /* --- LIGHT MODE PALETTE (Deep Blue/Academic) --- */
+  --color-primary-50: #eef2ff;
+  --color-primary-100: #e0e7ff;
+  --color-primary-200: #c7d2fe;
+  --color-primary-300: #a5b4fc;
+  --color-primary-400: #818cf8;
+  --color-primary-500: #6366f1;
+  --color-primary-600: #4f46e5;
+  --color-primary-700: #4338ca;
+  --color-primary-800: #3730a3;
+  --color-primary-900: #312e81; 
+  --color-primary-950: #1a2d6d; /* BK Navy */
+
+  /* Brand Colors */
+  --color-bk-navy: #1a2d6d;     /* Main Brand Dark Blue */
+  --color-bk-royal: #2c4199;    /* Secondary Brand Blue */
+  --color-bk-azure: #3b7dd8;    /* Bright Accent Blue */
+  --color-bk-sky: #4a9fe5;      /* Lighter Sky Blue */
+  --color-bk-white: #ffffff;    /* Pure White */
+  --color-bk-mist: #f0f2f5;     /* Light Gray BG (Facebook-ish Light) */
+
+  /* --- DARK MODE PALETTE (Facebook Style) --- */
+  --color-dark-bg: #18191a;     /* Facebook Main Background */
+  --color-dark-surface: #242526;/* Facebook Card/Nav Background */
+  --color-dark-hover: #3a3b3c;  /* Facebook Interactives/Input BG */
+  --color-dark-border: #393a3b; /* Facebook Borders */
+  --color-dark-text-main: #e4e6eb; /* Primary Text */
+  --color-dark-text-sec: #b0b3b8;  /* Secondary Text */
+  --color-dark-blue-accent: #2d88ff; /* Facebook Blue Accent */
+  
+  /* Accent Colors */
+  --color-accent-amber: #d97706;
+  --color-accent-gold: #b45309;
+  --color-accent-teal: #0d9488;
+
+  /* --- TYPOGRAPHY --- */
+  --font-display: 'EB Garamond', serif;
+  --font-sans: 'Crimson Text', serif; /* Academic feel */
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* --- SHADOWS --- */
+  --shadow-premium: 0 4px 6px -1px rgba(26, 45, 109, 0.1), 0 2px 4px -1px rgba(26, 45, 109, 0.06);
+  --shadow-premium-lg: 0 10px 15px -3px rgba(26, 45, 109, 0.15), 0 4px 6px -2px rgba(26, 45, 109, 0.1);
+  --shadow-dark: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  
+  /* --- ANIMATIONS --- */
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-shimmer: shimmer 2s linear infinite;
+  --animate-pulse-slow: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  
+  @keyframes pulse-slow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+  }
+}
+
+/* Base Styles */
+body {
+  @apply antialiased transition-colors duration-300;
+  
+  /* Light Mode */
+  @apply bg-bk-mist text-slate-900;
+  
+  /* Dark Mode - Explicit Facebook Colors */
+  @apply dark:bg-dark-bg dark:text-dark-text-main;
+
+  font-family: var(--font-sans);
+  font-size: 1.125rem; 
+  line-height: 1.75;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  @apply tracking-tight font-semibold text-bk-navy dark:text-dark-text-main transition-colors duration-300;
+}
+
+/* Typography Classes */
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-body {
+  font-family: var(--font-sans);
+}
+
+/* ================= COMPONENT UTILITIES ================= */
+
+/* Buttons */
+.btn-primary {
+  @apply inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold text-white transition-all duration-300;
+  /* Light: Gradient Blue */
+  background: linear-gradient(135deg, var(--color-bk-navy), var(--color-bk-royal));
+  box-shadow: 0 4px 6px rgba(26, 45, 109, 0.2);
+}
+
+.dark .btn-primary {
+  /* Dark: Facebook Blue Flat/Gradient */
+  background: linear-gradient(135deg, #2d88ff, #1877f2);
+  box-shadow: 0 4px 6px rgba(45, 136, 255, 0.3);
+}
+
+.btn-primary:hover {
+  @apply transform -translate-y-0.5 shadow-lg opacity-95;
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold transition-all duration-300;
+  @apply border-2 border-bk-navy text-bk-navy bg-transparent;
+  /* Dark Mode Secondary */
+  @apply dark:border-dark-hover dark:bg-dark-hover dark:text-dark-text-main;
+}
+
+.btn-secondary:hover {
+  @apply bg-bk-navy text-white;
+  @apply dark:bg-dark-border dark:text-white;
+}
+
+/* Cards */
+.card-academic {
+  @apply bg-white rounded-xl border border-white/50 overflow-hidden transition-all duration-300;
+  box-shadow: var(--shadow-premium);
+  /* Dark Mode Card */
+  @apply dark:bg-dark-surface dark:border-dark-border;
+}
+
+.dark .card-academic {
+  box-shadow: var(--shadow-dark);
+}
+
+.card-academic:hover {
+  @apply transform -translate-y-1;
+  box-shadow: var(--shadow-premium-lg);
+  @apply border-primary-200 dark:border-dark-hover;
+}
+
+/* Inputs */
+.input-academic {
+  @apply w-full px-4 py-3 rounded-lg border border-slate-200 bg-white transition-all duration-200;
+  @apply dark:bg-dark-hover dark:border-dark-border dark:text-dark-text-main dark:placeholder-dark-text-sec;
+  font-family: var(--font-sans);
+}
+
+.input-academic:focus {
+  @apply outline-none border-bk-royal ring-2 ring-bk-royal/20;
+  @apply dark:border-dark-blue-accent dark:ring-dark-blue-accent/30;
+}
+
+/* Glassmorphism Panels */
+.glass-panel {
+  @apply bg-white/80 backdrop-blur-xl border border-white/50 shadow-premium;
+}
+
+.glass-dark {
+  background: rgba(36, 37, 38, 0.9); /* FB Surface with Opacity */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-50 dark:bg-dark-bg;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 dark:bg-dark-hover rounded-full;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-400 dark:bg-gray-500;
+}
+
+/* Text Gradient */
+.text-gradient {
+  background: linear-gradient(135deg, var(--color-bk-navy), var(--color-bk-azure));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dark .text-gradient {
+  background: linear-gradient(135deg, #60a5fa, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
