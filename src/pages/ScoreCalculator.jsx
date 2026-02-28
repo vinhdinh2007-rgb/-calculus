@@ -143,34 +143,21 @@ export default function ScoreCalculator() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-dark-bg dark:via-dark-bg dark:to-dark-bg transition-colors duration-300">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white/80 dark:bg-dark-surface/80 backdrop-blur-xl border-b border-neutral-200 dark:border-dark-border transition-colors duration-300">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link 
-            to="/"
-            className="flex items-center gap-2 text-neutral-600 dark:text-dark-text-sec hover:text-neutral-900 dark:hover:text-dark-text-main transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span className="font-medium">Quay lại</span>
-          </Link>
-          
-          <div className="flex items-center gap-4">
-            {/* Theme Toggle */}
-            <button 
-              onClick={toggleTheme}
-              className="w-10 h-10 rounded-xl bg-slate-50 dark:bg-dark-hover flex items-center justify-center text-slate-600 dark:text-dark-text-sec hover:bg-slate-100 dark:hover:bg-dark-hover/80 hover:text-[#1a2d6d] dark:hover:text-white transition-all duration-300"
-            >
-              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
-
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#1a2d6d] to-[#3b7dd8] rounded-xl flex items-center justify-center">
-                <Calculator className="w-5 h-5 text-white" />
-              </div>
-              <div className="hidden sm:block">
-                <h1 className="font-bold text-neutral-800 dark:text-dark-text-main">PT2 - Tính điểm xét tuyển</h1>
-                <p className="text-xs text-neutral-500 dark:text-dark-text-sec">Xét tuyển kết hợp nhiều tiêu chí</p>
-              </div>
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-center relative">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-[#1a2d6d] to-[#3b7dd8] rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
+              <Calculator className="w-5 h-5 text-white" />
             </div>
+            <h1 className="font-bold text-xl text-neutral-800 dark:text-dark-text-main tracking-tight">Tính điểm xét tuyển</h1>
           </div>
+          
+          {/* Theme Toggle */}
+          <button 
+            onClick={toggleTheme}
+            className="absolute right-4 w-10 h-10 rounded-xl bg-slate-50 dark:bg-dark-hover flex items-center justify-center text-slate-600 dark:text-dark-text-sec hover:bg-slate-100 dark:hover:bg-dark-hover/80 hover:text-[#1a2d6d] dark:hover:text-white transition-all duration-300"
+          >
+            {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
         </div>
       </header>
 
