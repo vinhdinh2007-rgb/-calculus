@@ -396,22 +396,26 @@ export default function ScoreCalculator() {
               <label className="block text-sm font-medium text-neutral-700 dark:text-dark-text-sec mb-2">
                 Điểm cộng (không vượt quá 10 điểm đối với thang 100)
               </label>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {[
-                  { key: 'diemThuong', placeholder: 'Điểm thưởng' },
-                  { key: 'diemXetThuong', placeholder: 'Xét thưởng' },
-                  { key: 'diemKhuyenKhich', placeholder: 'Khuyến khích' }
+                  { key: 'diemThuong', placeholder: 'Điểm thưởng (0 - 3)', desc: 'Thí sinh được tuyển thẳng nhưng không dùng để xét tuyển thẳng', max: '3' },
+                  { key: 'diemXetThuong', placeholder: 'Xét thưởng (0 - 1.5)', desc: 'Thí sinh có thành tích hoặc có năng khiếu đặc biệt', max: '1.5' },
+                  { key: 'diemKhuyenKhich', placeholder: 'Khuyến khích (0 - 1.5)', desc: 'Thí sinh có chứng chỉ ngoại ngữ hoặc chứng chỉ quốc tế', max: '1.5' }
                 ].map((field) => (
-                  <div key={field.key}>
+                  <div key={field.key} className="flex flex-col gap-1.5">
                     <input
                       type="number"
                       min="0"
+                      max={field.max}
                       step="0.01"
                       value={scores[field.key]}
                       onChange={(e) => handleScoreChange(field.key, e.target.value)}
                       placeholder={field.placeholder}
-                      className="w-full px-4 py-3 bg-white dark:bg-dark-hover border border-neutral-300 dark:border-dark-border rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none transition-all text-neutral-900 dark:text-dark-text-main placeholder:text-neutral-400 dark:placeholder:text-dark-text-sec"
+                      className="w-full px-4 py-3 bg-white dark:bg-dark-hover border border-neutral-300 dark:border-dark-border rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none transition-all text-neutral-900 dark:text-dark-text-main placeholder:text-neutral-400 dark:placeholder:text-dark-text-sec text-sm sm:text-base"
                     />
+                    <span className="text-xs text-neutral-500 dark:text-dark-text-sec px-1 leading-snug">
+                      {field.desc}
+                    </span>
                   </div>
                 ))}
               </div>
