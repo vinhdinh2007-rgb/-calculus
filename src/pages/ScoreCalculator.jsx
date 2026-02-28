@@ -168,18 +168,18 @@ export default function ScoreCalculator() {
             <Sparkles className="w-6 h-6 text-amber-300 flex-shrink-0" />
             <div>
               <h2 className="text-lg font-bold !text-white mb-2">Công thức tính điểm PT2</h2>
-              <div className="bg-white/10 rounded-xl p-4 font-mono text-sm backdrop-blur-sm border border-white/10">
+              <div className="bg-white/10 rounded-xl p-4 font-mono text-sm backdrop-blur-sm border border-white/10 text-white/90">
                 <p className="mb-2 leading-relaxed">
-                  <span className="text-amber-300 font-bold">Điểm học lực</span> = 
-                  <span className="text-emerald-300"> Điểm năng lực × 70%</span> + 
-                  <span className="text-blue-300"> Điểm TNTHPT<sub>quy đổi</sub> × 20%</span> + 
-                  <span className="text-purple-300"> Điểm học THPT<sub>quy đổi</sub> × 10%</span>
+                  <span className="text-white font-bold tracking-wide">Điểm học lực</span> = 
+                  <span> Điểm năng lực × 70%</span> + 
+                  <span> Điểm TNTHPT<sub>quy đổi</sub> × 20%</span> + 
+                  <span> Điểm học THPT<sub>quy đổi</sub> × 10%</span>
                 </p>
                 <p className="leading-relaxed border-t border-white/20 pt-2 mt-2">
-                  <span className="text-pink-300 font-bold">Điểm xét tuyển</span> = 
-                  <span className="text-amber-300"> Điểm học lực</span> + 
-                  <span className="text-emerald-300"> Điểm cộng</span> + 
-                  <span className="text-blue-300"> Điểm ưu tiên</span>
+                  <span className="text-white font-bold tracking-wide">Điểm xét tuyển</span> = 
+                  <span> Điểm học lực</span> + 
+                  <span> Điểm cộng</span> + 
+                  <span> Điểm ưu tiên</span>
                 </p>
               </div>
             </div>
