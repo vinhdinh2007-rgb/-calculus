@@ -195,11 +195,11 @@ export default function ScoreCalculator() {
               <p className="text-sm text-neutral-600 dark:text-dark-text-sec mb-4 leading-relaxed">
                 Bảng quy đổi điểm xét tuyển dành cho thí sinh có chứng chỉ học thuật quốc tế (như SAT, ACT, IB, A-Level, ATAR) để thay thế hoặc tính thành điểm học lực theo hình thức xét tuyển PT2.
               </p>
-              <div className="rounded-xl overflow-hidden border border-neutral-200 dark:border-dark-border bg-neutral-100 dark:bg-dark-hover">
+              <div className="rounded-xl overflow-hidden border border-neutral-200 dark:border-dark-border bg-white dark:bg-[#2a2b2c] p-4 sm:p-6 flex justify-center items-center">
                 <img 
                   src="https://res.cloudinary.com/dzpwnejs8/image/upload/v1772278416/j6asgbnnih8ooarkcqsr.png" 
                   alt="Bảng quy đổi chứng chỉ quốc tế" 
-                  className="w-full h-auto object-contain mix-blend-multiply dark:mix-blend-normal"
+                  className="max-w-full h-auto object-contain mix-blend-multiply dark:mix-blend-normal rounded-lg shadow-sm"
                 />
               </div>
             </div>
