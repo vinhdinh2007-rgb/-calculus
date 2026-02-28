@@ -6,7 +6,7 @@ import ScoreCalculator from './pages/ScoreCalculator';
 function App() {
   return (
     <ThemeProvider>
-      <Router>
+      <Router basename={import.meta.env.BASE_URL}>
         <Routes>
           <Route path="/" element={<ScoreCalculator />} />
         </Routes>
