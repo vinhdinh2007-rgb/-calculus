@@ -168,18 +168,18 @@ export default function ScoreCalculator() {
             <Sparkles className="w-6 h-6 text-amber-300 flex-shrink-0" />
             <div>
               <h2 className="text-lg font-bold !text-white mb-2">Công thức tính điểm PT2</h2>
-              <div className="bg-white/10 rounded-xl p-4 font-mono text-sm backdrop-blur-sm border border-white/10 text-white/90">
+              <div className="bg-white/90 dark:bg-white/80 rounded-xl p-4 font-mono text-sm backdrop-blur-sm border border-white/20 text-black">
                 <p className="mb-2 leading-relaxed">
-                  <span className="text-white font-bold tracking-wide">Điểm học lực</span> = 
-                  <span> Điểm năng lực × 70%</span> + 
-                  <span> Điểm TNTHPT<sub>quy đổi</sub> × 20%</span> + 
-                  <span> Điểm học THPT<sub>quy đổi</sub> × 10%</span>
+                  <span className="text-[#1a2d6d] font-bold tracking-wide">Điểm học lực</span> = 
+                  <span className="text-black font-semibold"> Điểm năng lực × 70%</span> <span className="text-black">+</span> 
+                  <span className="text-black font-semibold"> Điểm TNTHPT<sub>quy đổi</sub> × 20%</span> <span className="text-black">+</span> 
+                  <span className="text-black font-semibold"> Điểm học THPT<sub>quy đổi</sub> × 10%</span>
                 </p>
-                <p className="leading-relaxed border-t border-white/20 pt-2 mt-2">
-                  <span className="text-white font-bold tracking-wide">Điểm xét tuyển</span> = 
-                  <span> Điểm học lực</span> + 
-                  <span> Điểm cộng</span> + 
-                  <span> Điểm ưu tiên</span>
+                <p className="leading-relaxed border-t border-black/10 pt-2 mt-2">
+                  <span className="text-[#1a2d6d] font-bold tracking-wide">Điểm xét tuyển</span> = 
+                  <span className="text-black font-semibold"> Điểm học lực</span> <span className="text-black">+</span> 
+                  <span className="text-black font-semibold"> Điểm cộng</span> <span className="text-black">+</span> 
+                  <span className="text-black font-semibold"> Điểm ưu tiên</span>
                 </p>
               </div>
             </div>
