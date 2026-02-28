@@ -182,6 +182,12 @@ export default function ScoreCalculator() {
                   <span className="text-black font-semibold"> Điểm ưu tiên</span>
                 </p>
               </div>
+
+              <div className="mt-3 bg-[#0a237d] dark:bg-[#1a2d6d] border-2 border-dashed border-white/80 rounded px-4 py-2 text-white font-mono text-[13px] text-center shadow-inner">
+                <span className="font-semibold text-[#8eb4ff]">Lưu ý:</span> Nếu <span className="font-semibold text-white">[Điểm học lực]</span> + <span className="font-semibold text-white">[Điểm cộng]</span> &ge; 75<br className="sm:hidden" />
+                <span className="hidden sm:inline"> thì </span>
+                <span className="font-bold">Điểm ưu tiên</span> = (100 - [Điểm học lực] - [Điểm cộng])/25 &times; [Điểm ưu tiên<sub>quy đổi</sub>], làm tròn đến 0.01
+              </div>
             </div>
           </div>
         </section>
