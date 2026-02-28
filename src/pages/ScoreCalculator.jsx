@@ -24,9 +24,10 @@ export default function ScoreCalculator() {
     tnthptToan: '',       // Điểm Toán TNTHPT
     tnthptMon2: '',       // Điểm môn 2 TNTHPT
     tnthptMon3: '',       // Điểm môn 3 TNTHPT
-    hocbaToan: '',        // TB điểm Toán 3 năm
-    hocbaMon2: '',        // TB điểm môn 2 3 năm
-    hocbaMon3: '',        // TB điểm môn 3 3 năm
+    tong9mon: '',         // Tổng 9 môn
+    toan10: '', ly10: '', hoa10: '', // Điểm chi tiết lớp 10
+    toan11: '', ly11: '', hoa11: '', // Điểm chi tiết lớp 11
+    toan12: '', ly12: '', hoa12: '', // Điểm chi tiết lớp 12
     diemThuong: '',       // Điểm thưởng
     diemXetThuong: '',    // Điểm xét thưởng
     diemKhuyenKhich: '',  // Điểm khuyến khích
@@ -50,9 +51,10 @@ export default function ScoreCalculator() {
       tnthptToan: '',
       tnthptMon2: '',
       tnthptMon3: '',
-      hocbaToan: '',
-      hocbaMon2: '',
-      hocbaMon3: '',
+      tong9mon: '',
+      toan10: '', ly10: '', hoa10: '',
+      toan11: '', ly11: '', hoa11: '',
+      toan12: '', ly12: '', hoa12: '',
       diemThuong: '',
       diemXetThuong: '',
       diemKhuyenKhich: '',
@@ -69,17 +71,26 @@ export default function ScoreCalculator() {
     const tnthptToan = parseFloat(scores.tnthptToan) || 0;
     const tnthptMon2 = parseFloat(scores.tnthptMon2) || 0;
     const tnthptMon3 = parseFloat(scores.tnthptMon3) || 0;
-    const hocbaToan = parseFloat(scores.hocbaToan) || 0;
-    const hocbaMon2 = parseFloat(scores.hocbaMon2) || 0;
-    const hocbaMon3 = parseFloat(scores.hocbaMon3) || 0;
-
     // Điểm TNTHPT quy đổi = [Tổng điểm 3 môn, TOÁN x 2] / 4 x 10
     const tongTNTHPT = tnthptToan * 2 + tnthptMon2 + tnthptMon3;
     const diemTNTHPTQuyDoi = (tongTNTHPT / 4) * 10;
 
-    // Điểm học THPT quy đổi = [Trung bình cộng điểm TB 3 năm các môn trong tổ hợp, TOÁN x 2] x 10
-    const tongHocBa = hocbaToan * 2 + hocbaMon2 + hocbaMon3;
-    const diemHocTHPTQuyDoi = (tongHocBa / 4) * 10;
+    // Điểm học THPT quy đổi
+    let diemHocTHPTQuyDoi = 0;
+    const t_tong9mon = parseFloat(scores.tong9mon);
+    
+    if (!isNaN(t_tong9mon) && t_tong9mon > 0) {
+      // Tính bằng tổng 9 môn
+      diemHocTHPTQuyDoi = (t_tong9mon / 9) * 10;
+    } else {
+      // Tính bằng lưới chi tiết 9 môn
+      const toanTB = ((parseFloat(scores.toan10)||0) + (parseFloat(scores.toan11)||0) + (parseFloat(scores.toan12)||0)) / 3;
+      const mon2TB = ((parseFloat(scores.ly10)||0) + (parseFloat(scores.ly11)||0) + (parseFloat(scores.ly12)||0)) / 3;
+      const mon3TB = ((parseFloat(scores.hoa10)||0) + (parseFloat(scores.hoa11)||0) + (parseFloat(scores.hoa12)||0)) / 3;
+      
+      const tongHocBa = toanTB * 2 + mon2TB + mon3TB;
+      diemHocTHPTQuyDoi = (tongHocBa / 4) * 10;
+    }
 
     let diemNangLuc;
 
@@ -352,15 +363,39 @@ export default function ScoreCalculator() {
               </div>
 
               <label className="block text-sm font-medium text-neutral-700 dark:text-dark-text-sec mb-2">
-                Điểm trung bình 3 năm THPT của từng môn trong tổ hợp
+                Nhập điểm học bạ <span className="font-normal italic">(*Dùng dấu (.) cho số thập phân*)</span>
               </label>
-              <div className="grid grid-cols-3 gap-4">
+              
+              {/* Tổng 9 môn */}
+              <div className="flex">
+                <div className="bg-neutral-100 dark:bg-dark-border text-neutral-600 dark:text-dark-text-main px-4 py-3 rounded-l-xl border border-r-0 border-neutral-300 dark:border-dark-border font-medium flex items-center min-w-[80px] justify-center">
+                  Tổng
+                </div>
+                <input
+                  type="number"
+                  min="0"
+                  max="90"
+                  step="0.01"
+                  value={scores.tong9mon}
+                  onChange={(e) => handleScoreChange('tong9mon', e.target.value)}
+                  placeholder="Nhập điểm tổng 9 môn"
+                  className="w-full px-4 py-3 bg-white dark:bg-dark-hover border border-neutral-300 dark:border-dark-border rounded-r-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-neutral-900 dark:text-dark-text-main placeholder:text-neutral-400 dark:placeholder:text-dark-text-sec"
+                />
+              </div>
+
+              <div className="text-sm italic text-neutral-500 dark:text-dark-text-sec my-3">hoặc</div>
+
+              {/* Lưới nhập điểm chi tiết */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {[
-                  { key: 'hocbaToan', placeholder: 'Môn Toán' },
-                  { key: 'hocbaMon2', placeholder: 'Môn 2' },
-                  { key: 'hocbaMon3', placeholder: 'Môn 3' }
+                  { label: 'Toán 10', key: 'toan10' }, { label: 'Lý 10', key: 'ly10' }, { label: 'Hóa, Anh 10', key: 'hoa10' },
+                  { label: 'Toán 11', key: 'toan11' }, { label: 'Lý 11', key: 'ly11' }, { label: 'Hóa, Anh 11', key: 'hoa11' },
+                  { label: 'Toán 12', key: 'toan12' }, { label: 'Lý 12', key: 'ly12' }, { label: 'Hóa, Anh 12', key: 'hoa12' }
                 ].map((field) => (
-                  <div key={field.key}>
+                  <div key={field.key} className="flex h-11">
+                    <div className="w-1/3 sm:w-2/5 bg-neutral-100 dark:bg-dark-border text-neutral-600 dark:text-dark-text-main px-2 py-1 leading-tight rounded-l-lg border border-r-0 border-neutral-300 dark:border-dark-border text-xs sm:text-sm font-medium flex items-center justify-center text-center">
+                      {field.label}
+                    </div>
                     <input
                       type="number"
                       min="0"
@@ -368,8 +403,8 @@ export default function ScoreCalculator() {
                       step="0.01"
                       value={scores[field.key]}
                       onChange={(e) => handleScoreChange(field.key, e.target.value)}
-                      placeholder={field.placeholder}
-                      className="w-full px-4 py-3 bg-white dark:bg-dark-hover border border-neutral-300 dark:border-dark-border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-neutral-900 dark:text-dark-text-main placeholder:text-neutral-400 dark:placeholder:text-dark-text-sec"
+                      placeholder="Nhập điểm..."
+                      className="w-2/3 sm:w-3/5 px-3 py-2 bg-white dark:bg-dark-hover border border-neutral-300 dark:border-dark-border rounded-r-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all text-neutral-900 dark:text-dark-text-main placeholder:text-neutral-400 dark:placeholder:text-dark-text-sec text-sm"
                     />
                   </div>
                 ))}
