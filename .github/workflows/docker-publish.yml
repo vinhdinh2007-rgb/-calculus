@@ -1,0 +1,98 @@
+name: Docker Publish
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+    inputs:
+      force_no_cache:
+        description: Force a clean build without GitHub Actions cache
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docker-publish-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docker:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      DOCKERHUB_REPO: ${{ vars.DOCKERHUB_REPO }}
+    steps:
+      - name: Validate DOCKERHUB_REPO format
+        id: validate
+        shell: bash
+        run: |
+          if [ -z "${DOCKERHUB_REPO}" ]; then
+            echo "::error::DOCKERHUB_REPO must be in format namespace/image"
+            exit 1
+          fi
+
+          regex='^[a-z0-9]([a-z0-9_-]*[a-z0-9])?\/[a-z0-9]([a-z0-9._-]*[a-z0-9])?$'
+          if ! [[ "${DOCKERHUB_REPO}" =~ ${regex} ]]; then
+            echo "::error::DOCKERHUB_REPO must be in format namespace/image (lowercase)"
+            exit 1
+          fi
+
+          echo "dockerhub_repo=${DOCKERHUB_REPO}" >> "${GITHUB_OUTPUT}"
+          echo "dockerhub_username=${DOCKERHUB_REPO%%/*}" >> "${GITHUB_OUTPUT}"
+
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
+
+      - name: Log in to Docker Hub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        with:
+          username: ${{ steps.validate.outputs.dockerhub_username }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
+        with:
+          images: ${{ steps.validate.outputs.dockerhub_repo }}
+          tags: |
+            type=sha,format=short,prefix=sha-
+            type=ref,event=branch,enable=${{ github.ref_type == 'branch' && github.event_name != 'pull_request' }}
+            type=ref,event=tag,enable=${{ github.ref_type == 'tag' && github.event_name != 'pull_request' }}
+            type=raw,value=latest,enable=${{ github.ref_type == 'branch' && github.ref_name == github.event.repository.default_branch && github.event_name != 'pull_request' }}
+
+      - name: Build and optionally push (cached)
+        if: github.event.inputs.force_no_cache != 'true'
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and optionally push (no cache)
+        if: github.event.inputs.force_no_cache == 'true'
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
