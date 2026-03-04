@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -12,12 +12,51 @@ import {
   AlertCircle,
   HelpCircle,
   Sun,
-  Moon
+  Moon,
+  ChevronDown,
+  ChevronUp,
+  ExternalLink
 } from 'lucide-react';
+import { insforge } from '../lib/insforge';
 import { useTheme } from '../contexts/ThemeContext';
 
 export default function ScoreCalculator() {
   const [hasDGNL, setHasDGNL] = useState(true); // Có thi ĐGNL hay không
+
+  // Admission Scores State
+  const [admissionScores, setAdmissionScores] = useState({ daiTra: [], oisp: [] });
+  const [loadingScores, setLoadingScores] = useState(true);
+  
+  // Collapsible UI state
+  const [expandedMain, setExpandedMain] = useState({ qual: true, unqual: false });
+  const [expandedSub, setExpandedSub] = useState({ 
+    qualDaiTra: true, qualOISP: true, 
+    unqualDaiTra: true, unqualOISP: true 
+  });
+
+  // Fetch admission scores on mount
+  useEffect(() => {
+    async function fetchScores() {
+      try {
+        const { data, error } = await insforge.database
+          .from('admission_scores_2025')
+          .select('*')
+          .order('score', { ascending: false });
+          
+        if (data) {
+          setAdmissionScores({
+            daiTra: data.filter(d => d.program_category === 'Chương trình đại trà'),
+            oisp: data.filter(d => d.program_category !== 'Chương trình đại trà')
+          });
+        }
+      } catch (err) {
+        console.error("Failed to fetch admission scores:", err);
+      } finally {
+        setLoadingScores(false);
+      }
+    }
+    fetchScores();
+  }, []);
   const [scores, setScores] = useState({
     dgnlScore: '',        // Điểm ĐGNL đã trừ Toán (0-900)
     dgnlToan: '',         // Điểm Toán trong ĐGNL
@@ -604,6 +643,172 @@ export default function ScoreCalculator() {
                     <p>Đây là công cụ tính điểm tham khảo theo công thức PT2 của ĐH Bách Khoa TP.HCM. Kết quả thực tế có thể khác tùy thuộc vào quy định từng năm.</p>
                   </div>
                 </div>
+              </div>
+
+              {/* Score Comparison Section */}
+              <div className="border-t border-neutral-200 dark:border-dark-border bg-neutral-50 dark:bg-dark-bg p-6">
+                <div className="mb-6">
+                  <h3 className="text-lg font-bold text-neutral-800 dark:text-neutral-200 mb-2">
+                    Với mức điểm <span className="text-blue-600 dark:text-blue-400">{result.diemXetTuyen}</span> năm 2025, bạn sẽ nhận được kết quả như sau (so với điểm chuẩn 2025):
+                  </h3>
+                  <div className="flex flex-wrap gap-4 text-sm">
+                    <a href="https://drive.google.com/drive/folders/1rJjGjYOCDK0uqnJkI1uYBrkzF9W2WlCn?usp=sharing" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">
+                      <ExternalLink className="w-4 h-4" /> Xem điểm các năm
+                    </a>
+                    <a href="https://drive.google.com/drive/folders/1J7yXVYZQVQnEStFuIPor8IN4B9zM-JrZ?usp=sharing" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 transition-colors">
+                      <ExternalLink className="w-4 h-4" /> Cách tính điểm 2026
+                    </a>
+                  </div>
+                </div>
+
+                {loadingScores ? (
+                  <div className="text-center py-8">
+                    <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-neutral-500 dark:text-dark-text-sec">Đang tải dữ liệu điểm chuẩn 2025...</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {(() => {
+                      const userScore = parseFloat(result.diemXetTuyen);
+                      const qualDaiTra = admissionScores.daiTra.filter(p => userScore >= p.score);
+                      const unqualDaiTra = admissionScores.daiTra.filter(p => userScore < p.score);
+                      const qualOISP = admissionScores.oisp.filter(p => userScore >= p.score);
+                      const unqualOISP = admissionScores.oisp.filter(p => userScore < p.score);
+                      const totalQual = qualDaiTra.length + qualOISP.length;
+                      const totalUnqual = unqualDaiTra.length + unqualOISP.length;
+                      const total = admissionScores.daiTra.length + admissionScores.oisp.length;
+
+                      const toggleMain = (key) => setExpandedMain(prev => ({ ...prev, [key]: !prev[key] }));
+                      const toggleSub = (key) => setExpandedSub(prev => ({ ...prev, [key]: !prev[key] }));
+
+                      const renderProgramList = (programs, isQualifying) => (
+                        <ul className="space-y-2 mt-2 border-l-2 border-neutral-200 dark:border-dark-border ml-2 pl-4">
+                          {programs.map(p => (
+                            <li key={p.code} className="flex items-start justify-between text-sm py-1 border-b border-neutral-100 dark:border-neutral-800/50 last:border-0 hover:bg-neutral-100/50 dark:hover:bg-dark-hover transition-colors rounded px-2">
+                              <div className="flex items-start gap-2 pr-4">
+                                <span className={`w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0 ${isQualifying ? 'bg-emerald-500' : 'bg-red-500'}`} />
+                                <span className="text-neutral-700 dark:text-neutral-300">{p.name} <span className="text-neutral-400 dark:text-neutral-500 text-xs">({p.code})</span></span>
+                              </div>
+                              <span className="font-semibold text-neutral-900 dark:text-neutral-100 flex-shrink-0">{p.score}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      );
+
+                      return (
+                        <>
+                          {/* Qualifying Programs */}
+                          <div className="bg-white dark:bg-dark-surface rounded-xl border border-emerald-200 dark:border-emerald-900/30 overflow-hidden">
+                            <button 
+                              onClick={() => toggleMain('qual')}
+                              className="w-full flex items-center justify-between p-4 bg-emerald-50/50 dark:bg-emerald-900/10 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors"
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className="bg-emerald-100 dark:bg-emerald-900/50 p-2 rounded-lg">
+                                  <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                                </div>
+                                <h4 className="font-bold text-emerald-800 dark:text-emerald-400">1. Các ngành bạn đủ điểm ({totalQual}/{total})</h4>
+                              </div>
+                              {expandedMain.qual ? <ChevronUp className="w-5 h-5 text-emerald-600" /> : <ChevronDown className="w-5 h-5 text-emerald-600" />}
+                            </button>
+                            
+                            <AnimatePresence>
+                              {expandedMain.qual && (
+                                <motion.div 
+                                  initial={{ height: 0 }}
+                                  animate={{ height: 'auto' }}
+                                  exit={{ height: 0 }}
+                                  className="overflow-hidden"
+                                >
+                                  <div className="p-4 pt-0">
+                                    {totalQual === 0 ? (
+                                      <p className="text-neutral-500 dark:text-neutral-400 italic py-2">Rất tiếc, mức điểm này chưa đủ đỗ ngành nào trong năm 2025.</p>
+                                    ) : (
+                                      <div className="space-y-4 pt-4">
+                                        {qualDaiTra.length > 0 && (
+                                          <div>
+                                            <button onClick={() => toggleSub('qualDaiTra')} className="flex items-center gap-2 text-sm font-semibold text-neutral-700 dark:text-neutral-300 w-full hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                              {expandedSub.qualDaiTra ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                              + Chương trình đại trà ({qualDaiTra.length})
+                                            </button>
+                                            {expandedSub.qualDaiTra && renderProgramList(qualDaiTra, true)}
+                                          </div>
+                                        )}
+                                        {qualOISP.length > 0 && (
+                                          <div>
+                                            <button onClick={() => toggleSub('qualOISP')} className="flex items-center gap-2 text-sm font-semibold text-neutral-700 dark:text-neutral-300 w-full hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                              {expandedSub.qualOISP ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                              + Chương trình OISP (giảng dạy tiếng Anh, tiên tiến...) ({qualOISP.length})
+                                            </button>
+                                            {expandedSub.qualOISP && renderProgramList(qualOISP, true)}
+                                          </div>
+                                        )}
+                                      </div>
+                                    )}
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+
+                          {/* Non-Qualifying Programs */}
+                          <div className="bg-white dark:bg-dark-surface rounded-xl border border-red-200 dark:border-red-900/30 overflow-hidden">
+                            <button 
+                              onClick={() => toggleMain('unqual')}
+                              className="w-full flex items-center justify-between p-4 bg-red-50/50 dark:bg-red-900/10 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className="bg-red-100 dark:bg-red-900/50 p-2 rounded-lg">
+                                  <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+                                </div>
+                                <h4 className="font-bold text-red-800 dark:text-red-400">2. Các khoa/ngành bạn không đủ điểm ({totalUnqual}/{total})</h4>
+                              </div>
+                              {expandedMain.unqual ? <ChevronUp className="w-5 h-5 text-red-600" /> : <ChevronDown className="w-5 h-5 text-red-600" />}
+                            </button>
+                            
+                            <AnimatePresence>
+                              {expandedMain.unqual && (
+                                <motion.div 
+                                  initial={{ height: 0 }}
+                                  animate={{ height: 'auto' }}
+                                  exit={{ height: 0 }}
+                                  className="overflow-hidden"
+                                >
+                                  <div className="p-4 pt-0">
+                                    {totalUnqual === 0 ? (
+                                      <p className="text-neutral-500 dark:text-neutral-400 italic py-2">Tuyệt vời! Bạn đủ điểm đỗ tất cả các ngành trong năm 2025.</p>
+                                    ) : (
+                                      <div className="space-y-4 pt-4">
+                                        {unqualDaiTra.length > 0 && (
+                                          <div>
+                                            <button onClick={() => toggleSub('unqualDaiTra')} className="flex items-center gap-2 text-sm font-semibold text-neutral-700 dark:text-neutral-300 w-full hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                              {expandedSub.unqualDaiTra ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                              + Chương trình đại trà ({unqualDaiTra.length})
+                                            </button>
+                                            {expandedSub.unqualDaiTra && renderProgramList(unqualDaiTra, false)}
+                                          </div>
+                                        )}
+                                        {unqualOISP.length > 0 && (
+                                          <div>
+                                            <button onClick={() => toggleSub('unqualOISP')} className="flex items-center gap-2 text-sm font-semibold text-neutral-700 dark:text-neutral-300 w-full hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                              {expandedSub.unqualOISP ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                              + Chương trình OISP (giảng dạy tiếng Anh, tiên tiến...) ({unqualOISP.length})
+                                            </button>
+                                            {expandedSub.unqualOISP && renderProgramList(unqualOISP, false)}
+                                          </div>
+                                        )}
+                                      </div>
+                                    )}
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
+                )}
               </div>
             </motion.section>
           )}

@@ -170,7 +170,7 @@ npm ci && npm run build
 
 # Build and smoke test the container
 docker build -t local/calc:test .
-docker run -d -p 8080:80 --name calc-smoke local/calc:test
+docker run -d -p 8080:8080 --name calc-smoke local/calc:test
 
 # Root smoke test
 curl --fail http://localhost:8080
@@ -225,6 +225,7 @@ The GitHub Actions cache returned a stale layer. Trigger `workflow_dispatch` and
 |---|---|
 | Docker Hub is the only delivery target; GitHub Pages deployment is retired | In scope |
 | Version-tag publishing via `push.tags` (e.g. `v1.0.0`) | Intentionally deferred |
-| Nginx hardening: gzip, security headers, long-cache strategy for hashed assets | Intentionally deferred |
+| Nginx hardening: gzip, security headers, long-cache strategy for hashed assets | Implemented (Cache-Control, X-Frame-Options, X-Content-Type-Options) |
+| Non-root container execution | Implemented (Nginx runs as `nginx` user on port 8080) |
 | Artifact upload on build failure for offline log inspection | Intentionally deferred; raw job logs are primary diagnostic source |
 | Multi-platform builds (e.g. `linux/arm64`) | Out of scope; `linux/amd64` only |
