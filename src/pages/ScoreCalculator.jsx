@@ -658,6 +658,9 @@ export default function ScoreCalculator() {
                     <a href="https://drive.google.com/drive/folders/1J7yXVYZQVQnEStFuIPor8IN4B9zM-JrZ?usp=sharing" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 transition-colors">
                       <ExternalLink className="w-4 h-4" /> Cách tính điểm 2026
                     </a>
+                    <a href="https://hcmut.edu.vn/bai-viet/chuong-trinh-dao-tao-tu-khoa-2019" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 transition-colors">
+                      <ExternalLink className="w-4 h-4" /> Chương trình đào tạo
+                    </a>
                   </div>
                 </div>
 
