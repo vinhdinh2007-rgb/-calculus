@@ -26,3 +26,10 @@ dist-ssr
 # Agent directories
 .agent/
 .agents/
+
+# Lock files
+package-lock.json
+skills-lock.json
+
+# Temp files
+temp_scores.json
