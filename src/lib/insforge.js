@@ -1,6 +1,13 @@
 import { createClient } from '@insforge/sdk';
 
+const baseUrl = import.meta.env.VITE_INSFORGE_BASE_URL;
+const anonKey = import.meta.env.VITE_INSFORGE_ANON_KEY;
+
+if (!baseUrl || !anonKey) {
+  throw new Error('Insforge credentials are not configured');
+}
+
 export const insforge = createClient({
-  baseUrl: 'https://6yu2x9dq.ap-southeast.insforge.app',
-  anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3OC0xMjM0LTU2NzgtOTBhYi1jZGVmMTIzNDU2NzgiLCJlbWFpbCI6ImFub25AaW5zZm9yZ2UuY29tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MTQ5MDB9.DE6mCHsgQzYWUpl5Nyym0McNEng9eG8dz7g4aUzK8rU'
+  baseUrl,
+  anonKey
 });

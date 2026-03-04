@@ -33,3 +33,5 @@ skills-lock.json
 
 # Temp files
 temp_scores.json
+.env
+.env.*

@@ -5,6 +5,10 @@ COPY package.json package-lock.json ./
 RUN npm ci && npm cache clean --force
 
 COPY . .
+ARG VITE_INSFORGE_BASE_URL
+ARG VITE_INSFORGE_ANON_KEY
+ENV VITE_INSFORGE_BASE_URL=$VITE_INSFORGE_BASE_URL
+ENV VITE_INSFORGE_ANON_KEY=$VITE_INSFORGE_ANON_KEY
 RUN npm run build
 
 FROM nginx:1.29-alpine AS runtime

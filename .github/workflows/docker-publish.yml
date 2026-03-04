@@ -83,6 +83,9 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+             VITE_INSFORGE_BASE_URL=${{ secrets.VITE_INSFORGE_BASE_URL }}
+             VITE_INSFORGE_ANON_KEY=${{ secrets.VITE_INSFORGE_ANON_KEY }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -96,3 +99,6 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+             VITE_INSFORGE_BASE_URL=${{ secrets.VITE_INSFORGE_BASE_URL }}
+             VITE_INSFORGE_ANON_KEY=${{ secrets.VITE_INSFORGE_ANON_KEY }}
