@@ -117,8 +117,12 @@ export default function ScoreCalculator() {
     // Điểm học THPT quy đổi
     let diemHocTHPTQuyDoi = 0;
     const t_tong9mon = parseFloat(scores.tong9mon);
+    const format2 = (value) => Number.isFinite(value) ? value.toFixed(2) : '0.00';
+    const safeNumber = (value) => Number.isFinite(value) ? value : 0;
     
-    if (!isNaN(t_tong9mon) && t_tong9mon > 0) {
+    const usingTong9Mon = !isNaN(t_tong9mon) && t_tong9mon > 0;
+
+    if (usingTong9Mon) {
       // Tính bằng tổng 9 môn
       diemHocTHPTQuyDoi = (t_tong9mon / 9) * 10;
     } else {
@@ -130,6 +134,20 @@ export default function ScoreCalculator() {
       const tongHocBa = toanTB * 2 + mon2TB + mon3TB;
       diemHocTHPTQuyDoi = (tongHocBa / 4) * 10;
     }
+
+    const toanTB = ((parseFloat(scores.toan10)||0) + (parseFloat(scores.toan11)||0) + (parseFloat(scores.toan12)||0)) / 3;
+    const mon2TB = ((parseFloat(scores.ly10)||0) + (parseFloat(scores.ly11)||0) + (parseFloat(scores.ly12)||0)) / 3;
+    const mon3TB = ((parseFloat(scores.hoa10)||0) + (parseFloat(scores.hoa11)||0) + (parseFloat(scores.hoa12)||0)) / 3;
+    const hocBaMethod = usingTong9Mon ? 'tong9mon' : 'chi_tiet';
+    const hocBaFormulaText = usingTong9Mon
+      ? `(${format2(t_tong9mon)} / 9) × 10`
+      : `(( ${format2(toanTB)} × 2 + ${format2(mon2TB)} + ${format2(mon3TB)} ) / 4) × 10`;
+    const hocBaDisplay = {
+      tong9mon: safeNumber(t_tong9mon),
+      toanTB: safeNumber(toanTB),
+      mon2TB: safeNumber(mon2TB),
+      mon3TB: safeNumber(mon3TB)
+    };
 
     let diemNangLuc;
 
@@ -186,6 +204,9 @@ export default function ScoreCalculator() {
       diemUuTien: diemUuTienThucTe.toFixed(2),
       diemXetTuyen: diemXetTuyen.toFixed(2),
       tongTNTHPT: tongTNTHPT.toFixed(1),
+      hocBaMethod,
+      hocBaDisplay,
+      hocBaFormulaText
     };
   }, [scores, hasDGNL]);
 
@@ -596,7 +617,7 @@ export default function ScoreCalculator() {
                     <div>
                       <span className="font-medium text-purple-700 dark:text-purple-400">Điểm học THPT quy đổi</span>
                       <p className="text-xs text-purple-500 dark:text-purple-500/80 mt-0.5">
-                        (({scores.hocbaToan || 0} × 2 + {scores.hocbaMon2 || 0} + {scores.hocbaMon3 || 0}) / 4) × 10
+                        {result.hocBaFormulaText}
                       </p>
                     </div>
                     <span className="text-2xl font-bold text-purple-700 dark:text-purple-400">{result.diemHocTHPTQuyDoi}</span>
